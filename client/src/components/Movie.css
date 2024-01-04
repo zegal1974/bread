@@ -1,0 +1,28 @@
+.movie-box {
+  display: block;
+  background-color: #fff;
+  overflow: hidden;
+  margin: 10px;
+  width: 167px;
+  padding: 0px;
+  border: none;
+  border-radius: 0px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.movie-box .photo-frame {
+  overflow: hidden;
+  height: 200px;
+  margin: 10px;
+}
+
+.movie-box img {
+  height: 200px;
+}
+
+.movie-box small {
+  color: #cc0000;
+  font-size: 12px;
+}

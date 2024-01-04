@@ -1,0 +1,27 @@
+.avatar-box {
+  display: block;
+  background-color: #fff;
+  overflow: hidden;
+  margin: 10px;
+  width: 149px;
+  padding: 0px;
+  border: none;
+  border-radius: 0px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.photo-frame {
+  margin: 12px;
+}
+
+.photo-info {
+  word-wrap: break-word;
+  display: block;
+  padding: 10px;
+  line-height: 23px;
+  color: #333;
+  background-color: #fafafa;
+  border-top: 1px solid #f2f2f2;
+}
