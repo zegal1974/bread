@@ -89,7 +89,7 @@ def load_data(filename: str) -> dict:
     return results
 
 
-def data_filter(data: dict, fields: list) -> dict:
+def data_filter(data: dict, fields: tuple) -> dict:
     return dict(filter(lambda x: x[0] in fields, data.items()))
 
 

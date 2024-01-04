@@ -1,10 +1,8 @@
-
 import django
 from django import apps
 
 from api.models.models import Actor, Director, Genre, Movie, Producer, Publisher, Series
 from api.utils import base
-
 
 FIELDS_MOVIE = ('name', 'code', 'code_prefix', 'code_number', 'gid',
                 'thumbnail', 'cover', 'length', 'rating', 'published_on')
@@ -57,12 +55,12 @@ def update_movie(data: dict) -> Movie:
     return movie
 
 
-def update_actor(data: dict):
+def update_actor(data: dict) -> Actor:
     """ Refresh the Actress by data.
         :param data: data of actress.
     """
     sid = data['sid']
-    actor, created = Actor.update_or_create(sid=sid, defaults=data)
+    actor, created = Actor.objects.update_or_create(sid=sid, defaults=data)
     return actor
 
 

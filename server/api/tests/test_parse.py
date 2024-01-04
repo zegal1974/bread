@@ -1,5 +1,5 @@
 from api.scraper.javbus import JavbusScraper
-from api.scraper.parse import get_number, parse_element, parse_tree
+from api.scraper.parse import get_number, parse_element, parse_tree, parse_html
 from lxml import etree
 
 
@@ -36,7 +36,7 @@ def test_parse_tree():
 def test_parse_movie():
     with open('api/tests/files/movie.html', 'r', encoding='UTF-8') as f:
         doc = etree.HTML(f.read())
-        movie = parse_element(doc, JavbusScraper.movie_css['fields'])
+        movie = parse_element(doc, JavbusScraper.movie_css)
         # print(movie)
         assert movie is not None
         assert movie['code'] == 'IPZZ-120'
@@ -47,7 +47,7 @@ def test_parse_movie():
 def test_parse_movie_productor():
     with open('api/tests/files/movie.html', 'r', encoding='UTF-8') as f:
         doc = etree.HTML(f.read())
-        productor = parse_element(doc, JavbusScraper.productor_css['fields'])
+        productor = parse_element(doc, JavbusScraper.productor_css)
         # print(productor)
         assert productor is not None
         assert productor['sid'] == '1'
@@ -56,7 +56,7 @@ def test_parse_movie_productor():
 def test_parse_movie_publisher():
     with open('api/tests/files/movie.html', 'r', encoding='UTF-8') as f:
         doc = etree.HTML(f.read())
-        publisher = parse_element(doc, JavbusScraper.publisher_css['fields'])
+        publisher = parse_element(doc, JavbusScraper.publisher_css)
         # print(publisher)
         assert publisher is not None
         assert publisher['sid'] == '5d'
@@ -91,13 +91,14 @@ def test_parse_actor_movies():
 def test_parse_actor_info():
     with open('api/tests/files/star.html', 'r', encoding='UTF-8') as f:
         doc = etree.HTML(f.read())
-        actor = parse_tree(doc, JavbusScraper.actor_css)
+        actor = parse_element(doc, JavbusScraper.actor_css)
         # print(actor)
         # assert actor[0]['sid'] == 'qs6'
-        assert actor[0]['age'] == '25'
-        assert actor[0]['cups'] == 'B'
-        assert actor[0]['bust'] == '80'
-        assert actor[0]['waist'] == '58'
+        assert actor['age'] == '25'
+        assert actor['cups'] == 'B'
+        assert actor['bust'] == '80'
+        assert actor['waist'] == '58'
+        assert actor['summary'] == '140'
 
 
 # def test_parse_movie_gid():

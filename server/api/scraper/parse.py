@@ -81,25 +81,27 @@ def parse_tree(doc, conf: dict):
     children = doc.xpath(conf['xpath'])
     # print(children)
     res = []
-    if not 'fields' in conf:
+    if 'fields' not in conf:
         return None  # TODO：Arguments Error
     for child in children:
-        node = parse_element(child, conf['fields'])
+        node = parse_element(child, conf)
         # print(node)
         if len(node.items()) > 0:
             res.append(node)
     return res
 
 
-def parse_element(doc, conf: list):
+def parse_element(doc, conf: dict):
     node = {}
-    for field in conf:
+    if 'fields' not in conf:
+        return None
+    for field in conf['fields']:
         find = etree.XPath(field['xpath'])
         res = find(doc)
+        print(field['name'], res)
         if len(res) == 0:
             continue
 
-        print(field['name'], res[0])
         if 'select' in field:
             node[field['name']] = res[0].xpath(field['select']).strip()
         # elif 'modifier' in field:

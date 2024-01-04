@@ -211,9 +211,15 @@ def _show_genres(genres):
                    ', '.join(map(lambda genre: genre.name, genres)))
 
 
+def refresh_actor(sid: str):
+    scraper = JavbusScraper()
+    data = scraper.refresh_actor(sid)
+    actor = db.update_actor(data)
+
+
 def refresh_movie(code):
     scraper = JavbusScraper()
     data = scraper.refresh_movie(code)
-    db.update_movie(data)
+    movie = db.update_movie(data)
 
-    #
+    # TODO: magnets

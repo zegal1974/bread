@@ -24,41 +24,44 @@ class JavbusScraper(Scraper):
     # }
     # TODO:
     actor_css = {
-        'xpath': '//div[@class="avatar-box"]',
         'fields': [
             {'name': 'thumb',
-             'xpath': 'div[@class="photo-frame"]/img/@src'},
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-frame"]/img/@src'},
             {'name': 'name',
-             'xpath': 'div[@class="photo-info"]/span/text()'},
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/span/text()'},
             {'name': 'birthday',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "生日: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "生日: ")]',
              'select': 'match("([0-9-]+)")'},
             {'name': 'age',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "年齡: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "年齡: ")]',
              'select': 'match("([0-9]+)")'},
             {'name': 'height',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "身高: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "身高: ")]',
              'select': 'match("([0-9]+)")'},
             {'name': 'cups',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "罩杯: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "罩杯: ")]',
              'select': 'normalize-space(substring-after(.,":"))'},
             {'name': 'bust',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "胸圍: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "胸圍: ")]',
              'select': 'match("([0-9]+)")'},
             {'name': 'waist',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "腰圍: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "腰圍: ")]',
              'select': 'match("([0-9]+)")'},
             {'name': 'hip',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "臀圍: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "臀圍: ")]',
              'select': 'match("([0-9]+)")'},
             {'name': 'homeland',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "出生地: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "出生地: ")]',
              'select': 'normalize-space(substring-after(.,":"))'},
             {'name': 'hobiies',
-             'xpath': 'div[@class="photo-info"]/p[starts-with(text(), "愛好: ")]',
+             'xpath': '//div[@class="avatar-box"]//div[@class="photo-info"]/p[starts-with(text(), "愛好: ")]',
              'select': 'substring-after(.,":")'},
+            {'name': 'summary',
+             'xpath': '//a[@class="mypointer"]',
+             'select': 'match("([0-9]+)")'},
         ]
     }
+
     movies_css = {
         'xpath': '//div[@class="item"]/a[@class="movie-box"]',
         'fields': [
@@ -175,18 +178,20 @@ class JavbusScraper(Scraper):
             return None
         return req.text
 
-    def refresh_actor(self, sid: str, all_movies: bool = False) -> Actor | None:
+    def refresh_actor(self, sid: str, all_movies: bool = False) -> dict:
         """ 刷新指定的 actor 信息和 movies 列表.
             :param sid: actor's sid
             :param all_movies: 是否扫描所有的 movies, 缺省为 False, 只刷新新增的
 
-            :return actor
+            :return data
         """
-        actor = None
-
+        content = self.get_html(self.url_actor(sid))
+        doc = etree.HTML(content)
+        actor = parse_element(doc, JavbusScraper.actor_css['fields'])
+        actor['movies'] = parse_element(doc, JavbusScraper.movies_css['fields'])
         return actor
 
-    def refresh_movie(self, code: str):
+    def refresh_movie(self, code: str) -> dict:
         content = self.get_html(self.url_movie(code))
         doc = etree.HTML(content)
         movie = parse_element(doc, JavbusScraper.movie_css['fields'])
