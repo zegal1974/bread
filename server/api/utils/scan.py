@@ -6,6 +6,8 @@ import random
 import time
 import datetime
 import re
+
+from api import config
 from api.scraper.parse import get_id, get_number, get_pic
 # import click
 
@@ -86,9 +88,9 @@ def refresh_actor(sid: str, all_movies: bool = False) -> Actor | None:
     movies = _scan_movies_list(doc)
 
     if all_movies:
-        max_page = summary // COUNT_PRE_PAGE + 1
+        max_page = summary // config.JAVBUS_COUNT_PRE_PAGE + 1
     else:
-        max_page = (summary - count) // COUNT_PRE_PAGE + 1
+        max_page = (summary - count) // config.JAVBUS_COUNT_PRE_PAGE + 1
 
     movies = movies + _scan_actor_movies_list(sid, max_page)
 

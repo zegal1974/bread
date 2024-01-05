@@ -6,6 +6,7 @@ from rich.table import Table
 import django
 from django.db.models import Q, F, Count
 from api.models.models import Actor, Movie
+from api.scraper.javbus import JavbusScraper
 from api.utils import base, local
 
 from cli import action
@@ -88,10 +89,12 @@ def refresh_actor(ctx, option):
     actor = ctx.obj
     if option is None:
         click.echo("refresh")
-    # if option == 'list':
-    #     # scan.refresh_actress(actor.sid, True)
-    # if option == 'all':
-    #     # scan.refresh_actor_movies(actor)
+
+    if option == 'list':
+        action.refresh_actor(actor.sid)
+    if option == 'all':
+        action.refresh_actor_movies(actor)
+
     action.show_actor(actor)
 
 

@@ -7,7 +7,6 @@ from api.models.models import Actor, Director, Genre, Magnet, Movie, Producer, P
 from django.db.models import Q, F, Count
 
 from api.scraper.javbus import JavbusScraper
-# from django.db.models import F
 
 from api.utils import base, db
 
@@ -213,13 +212,17 @@ def _show_genres(genres):
 
 def refresh_actor(sid: str):
     scraper = JavbusScraper()
-    data = scraper.refresh_actor(sid)
-    actor = db.update_actor(data)
+    actor = scraper.refresh_actor(sid)
+    return actor
 
 
-def refresh_movie(code):
+def refresh_movie(code: str):
     scraper = JavbusScraper()
-    data = scraper.refresh_movie(code)
-    movie = db.update_movie(data)
-
+    movie = scraper.refresh_movie(code)
+    return movie
     # TODO: magnets
+
+
+def refresh_actor_movies(actor: Actor):
+    scraper = JavbusScraper()
+    scraper.refresh_actor_movies(actor)

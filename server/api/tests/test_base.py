@@ -33,6 +33,12 @@ def test_scan_path():
     pass
     # assert len(rs)==2
 
+
 # def test_movie_info():
 #     info = base.movie_info('tests/files/41576.mp4')
 #     assert info['codec_name'] == 'h264'
+
+
+def test_get_magnet_hash():
+    assert base.get_magnet_hash(
+        "magnet:?xt=urn:btih:03eba7a9937dc7d8564a3962e74007e95f6e9b74") == "03eba7a9937dc7d8564a3962e74007e95f6e9b74"

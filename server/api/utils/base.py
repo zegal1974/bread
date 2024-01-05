@@ -153,3 +153,7 @@ def scan_path(path: str) -> dict:
 
 def get_basename(path: str) -> str:
     return os.path.basename(path).split('/')[-1]
+
+
+def get_magnet_hash(magnet: str) -> str:
+    return magnet

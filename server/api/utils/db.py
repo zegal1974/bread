@@ -55,12 +55,22 @@ def update_movie(data: dict) -> Movie:
     return movie
 
 
+def update_actor_movies(actor: Actor, data: tuple):
+    for md in data:
+        movie, created = Movie.objects.update_or_create(code=md['code'], defaults=md)
+        if created:
+            movie.actors.add(actor)
+        else:
+            if not movie.actors.exists(actor):
+                movie.actors.add(actor)
+        movie.save()
+
+
 def update_actor(data: dict) -> Actor:
     """ Refresh the Actress by data.
         :param data: data of actress.
     """
-    sid = data['sid']
-    actor, created = Actor.objects.update_or_create(sid=sid, defaults=data)
+    actor, created = Actor.objects.update_or_create(sid=data['sid'], defaults=data)
     return actor
 
 

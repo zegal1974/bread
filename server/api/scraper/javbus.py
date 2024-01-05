@@ -1,9 +1,13 @@
+import random
+import time
+
 from lxml import etree
 
-from api.models.models import Movie, Actor
-from api.scraper.parse import parse_element
+from api.models.models import Movie, Actor, Publisher, Producer, Series, Magnet
+from api.scraper.parse import parse_element, parse_tree
 from api.scraper.scraper import Scraper
 from api import config
+from api.utils import db
 from api.utils.net import http_get
 
 
@@ -98,7 +102,7 @@ class JavbusScraper(Scraper):
         ]
     }
 
-    productor_css = {
+    producer_css = {
         'fields': [
             {'name': 'sid',
              'xpath': '//div[@class="row movie"]/div[2]/p/span[contains(text(),"製作商:")]/following::a',
@@ -135,6 +139,15 @@ class JavbusScraper(Scraper):
              'xpath': './a', 'select': 'get_id()'},
             {'name': 'name',
              'xpath': 'a/text()'},
+        ]
+    }
+
+    movie_magnets_css = {
+        'xpath': '//tr',
+        'fields': [
+            {'name': 'link', 'xpath': 'td/a[rel="nofollow"][0]/@href'},
+            {'name': 'size', 'xpath': 'td/a[rel="nofollow"][1]'},
+            {'name': 'shared_on', 'xpath': 'td/a[rel="nofollow"][2]/text()'}
         ]
     }
 
@@ -178,7 +191,7 @@ class JavbusScraper(Scraper):
             return None
         return req.text
 
-    def refresh_actor(self, sid: str, all_movies: bool = False) -> dict:
+    def refresh_actor(self, sid: str, all_movies: bool = False) -> Actor:
         """ 刷新指定的 actor 信息和 movies 列表.
             :param sid: actor's sid
             :param all_movies: 是否扫描所有的 movies, 缺省为 False, 只刷新新增的
@@ -187,12 +200,94 @@ class JavbusScraper(Scraper):
         """
         content = self.get_html(self.url_actor(sid))
         doc = etree.HTML(content)
-        actor = parse_element(doc, JavbusScraper.actor_css['fields'])
-        actor['movies'] = parse_element(doc, JavbusScraper.movies_css['fields'])
+        adata = parse_element(doc, JavbusScraper.actor_css)
+        actor = db.update_actor(adata)
+
+        movies = parse_element(doc, JavbusScraper.movies_css)
+        db.update_actor_movies(actor, movies)
+
+        count = actor.movies.count()
+        summary = adata['summary']
+
+        if all_movies:
+            max_page = summary // config.JAVBUS_COUNT_PRE_PAGE + 1
+        else:
+            max_page = (summary - count) // config.JAVBUS_COUNT_PRE_PAGE + 1
+
+        self._refresh_actor_movies(actor, max_page)
+
         return actor
+
+    def _refresh_actor_movies(self, actor: Actor, pages: int):
+        for page in range(2, pages + 1):
+            url = self.url_actor(actor.sid, page)
+            content = self.get_html(url)
+            doc = etree.HTML(content)
+
+            movies = parse_element(doc, JavbusScraper.movies_css)
+            db.update_actor_movies(actor, movies)
 
     def refresh_movie(self, code: str) -> dict:
         content = self.get_html(self.url_movie(code))
         doc = etree.HTML(content)
-        movie = parse_element(doc, JavbusScraper.movie_css['fields'])
+        movie = parse_element(doc, JavbusScraper.movie_css)
+
+        self.refresh_movie_publisher(movie, doc)
+        self.refresh_movie_producer(movie, doc)
+        self.refresh_movie_series(movie, doc)
+        self.refresh_movie_genres(movie, doc)
+
+        movie.save()
         return movie
+
+    def refresh_movie_publisher(self, movie: Movie, doc):
+        data = parse_element(doc, JavbusScraper.publisher_css)
+        publisher, created = Publisher.objects.update_or_create(sid=data['sid'], defaults=data)
+        movie.publisher = publisher
+
+    def refresh_movie_producer(self, movie: Movie, doc):
+        data = parse_element(doc, JavbusScraper.producer_css)
+        producer, created = Producer.objects.update_or_create(sid=data['sid'], defaults=data)
+        movie.producer = Producer
+
+    def refresh_movie_series(self, movie: Movie, doc):
+        data = parse_element(doc, JavbusScraper.series_css)
+        series, created = Series.objects.update_or_create(sid=data['sid'], defaults=data)
+        movie.series = series
+
+    def refresh_movie_genres(self, movie: Movie, doc):
+        data = parse_tree(doc, JavbusScraper.genres_css)
+        for g in data:
+            genre, created = Series.objects.update_or_create(sid=g['sid'], defaults=g)
+            if not movie.genres.exists(genre):
+                movie.genres.add(genre)
+
+    def refresh_movie_actors(self, movie: Movie, doc):
+        data = parse_tree(doc, JavbusScraper.movie_actors_css)
+        for a in data:
+            actor, created = Series.objects.update_or_create(sid=a['sid'], defaults=a)
+            if not movie.actors.exists(actor):
+                movie.actors.add(actor)
+
+    def refresh_movie_torrents(self, movie: Movie, gid: str):
+        content = self.get_html(self.url_magnets(movie))
+        doc = etree.HTML(content)
+        data = parse_tree(doc, JavbusScraper.movie_magnets_css)
+        for m in data:
+            magnet, created = Magnet.objects.update_or_create(hash=m['hash'], defaults=m)
+            if not movie.magnets.exists(magnet):
+                movie.magnets.add(magnet)
+
+    def refresh_actor_movies(self, actor: Actor, force=False):
+        """ 刷新指定 actor 的 movies 的详细信息
+            :param actor: 指定的 actor
+            :param force: 是否刷新所有的 movies, 缺省是 False, 只刷新未刷新过的 movies
+        """
+        if force:
+            movies = actor.movies.all()
+        else:
+            movies = actor.movies.filter(refreshed_at=None)
+
+        for movie in movies:
+            self.refresh_movie(movie.code)
+            time.sleep(random.random())
