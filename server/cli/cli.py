@@ -4,6 +4,7 @@ from django.db.models import Q
 from core.models.models import Actor, Movie
 
 from cli import action
+from core.utils.db import db_restore
 
 from .repl import repl
 from core.utils import local
@@ -44,6 +45,28 @@ def collate_all():
     for actor in actors:
         click.echo(f"collate the actress {actor.name}")
         local.collate_actor(actor)
+
+
+''' --- DB mode ---- '''
+
+
+@cli.group(short_help="Enter to Database mode")
+def db():
+    pass
+
+
+@db.command()
+def backup():
+    click.echo("Backing up the database data to files...")
+    # db.backup()
+    click.echo("Backup is complete.")
+
+
+@db.command()
+def restore():
+    click.echo("Restoring the backup data...")
+    db_restore()
+    click.echo("Restored the database data.")
 
 
 ''' --- Actor mode ---- '''

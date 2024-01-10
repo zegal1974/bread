@@ -1,7 +1,7 @@
 from django.db import models
-# from django.db.models import Model
 
-from django.db.models import ForeignKey, TextField, Model, CharField, IntegerField, DateField, DateTimeField, \
+from django.db.models import Model
+from django.db.models import ForeignKey, TextField, CharField, IntegerField, DateField, DateTimeField, \
     SET_NULL, FloatField, ManyToManyField
 
 

@@ -1,8 +1,11 @@
 import django
-from django import apps
+from django.apps import apps
+
+# from django.db.migrations.operations import models
 
 from core.models.models import Actor, Director, Genre, Movie, Producer, Publisher, Series
 from core.utils import base
+from core.utils.base import load_data
 
 FIELDS_MOVIE = ('name', 'code', 'code_prefix', 'code_number', 'gid',
                 'thumbnail', 'cover', 'length', 'rating', 'published_on')
@@ -70,8 +73,16 @@ def update_actor(data: dict) -> Actor:
     return actor
 
 
-def restore():
-    # click.echo('Restoring the database ... ')
-    tables = [i._meta.db_table for i in apps.get_models(
-        include_auto_created=True)]
-    print(tables)
+def db_restore():
+    import warnings
+    warnings.filterwarnings("ignore")
+
+    tables = ['Actor', 'Director', 'Genre', 'Producer', 'Publisher', 'Series', 'Movie', 'Magnet', 'ActorsMovies',
+              'GenresMovies']
+    for table in tables:
+        data = load_data('tmp/' + table.lower() + '.json')
+        model = apps.get_model('core.%s' % table)
+        print(table)
+        instances = [model(**item) for item in data]
+        model.objects.bulk_create(instances)
+        print(table, model.objects.count())
