@@ -1,4 +1,4 @@
-from .models.models import Actor
+from core.models import Actor
 from .serializers import ActorSerializer
 from rest_framework import generics
 

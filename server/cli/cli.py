@@ -1,20 +1,12 @@
-import os
 import click
-import rich
-from rich.table import Table
 
-import django
-from django.db.models import Q, F, Count
-from api.models.models import Actor, Movie
-from api.scraper.javbus import JavbusScraper
-from api.utils import base, local
+from django.db.models import Q
+from core.models.models import Actor, Movie
 
 from cli import action
 
 from .repl import repl
-
-
-# import action
+from core.utils import local
 
 
 @click.group(invoke_without_command=True, context_settings={})
@@ -42,14 +34,14 @@ def show_actors():
 @cli.command
 @click.argument('aid')
 def collate(aid):
-    locals.collate(aid)
+    local.collate(aid)
 
 
 @cli.command
 def collate_all():
-    actors = Actor.objects.filter(rating__lg=0)
+    actors = Actor.objects.filter(rating__gt=0)
 
-    for actor in actors.all():
+    for actor in actors:
         click.echo(f"collate the actress {actor.name}")
         local.collate_actor(actor)
 
@@ -123,8 +115,9 @@ def change_actor_value(ctx, attribute, value):
     # TODO: 当前 actress 实例未改变值
     # Actor.objects.update({attribute: value}).where(
     #     id == actress.id).execute()
-    actor[attribute] = value
+    actor.__setattr__(attribute, value)
     actor.save()
+    actor.refresh_from_db()
     action.show_actor(actor)
 
 
@@ -133,12 +126,11 @@ def change_actor_value(ctx, attribute, value):
 
 @cli.group('movie', invoke_without_command=True, short_help="Enter to Movie mode")
 @click.argument('code')
-@click.argument('number', required=False)
+# @click.argument('number', required=False)
 @click.pass_context
-def movie_mode(ctx, code, number):
+def movie_mode(ctx, code):
     code = code.upper()
-    if number:
-        code = "%s-%s" % (code, number)
+
     movie = Movie.objects.get(code=code)
     if movie is None:
         click.echo("Can't find the movie of CODE is %s." % code)
@@ -177,6 +169,9 @@ MOVIE_ATTRS = ['rating', 'description']
 @click.argument('value')
 def movie_set(ctx, attribute, value):
     movie = ctx.obj
-    Movie.update({attribute: value}).where(
-        Movie.id == movie.id).execute()
+
+    movie.__setattr__(attribute, value)
+    movie.save()
+
+    movie.refresh_from_db()
     action.show_movie(movie)

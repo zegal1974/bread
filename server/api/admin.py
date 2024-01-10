@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models.models import Actor
+from core.models.models import Actor
 
 
 class ActorAdmin(admin.ModelAdmin):

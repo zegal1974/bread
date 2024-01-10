@@ -3,12 +3,12 @@ import os
 import click
 import rich
 from rich.table import Table
-from api.models.models import Actor, Director, Genre, Magnet, Movie, Producer, Publisher, Series, Torrent, Video
-from django.db.models import Q, F, Count
+from core.models.models import Actor, Director, Genre, Magnet, Movie, Producer, Publisher, Series, Torrent, Video
+from django.db.models import Q, Count
 
-from api.scraper.javbus import JavbusScraper
+from core.scraper.javbus import JavbusScraper
 
-from api.utils import base, db
+from core.utils import base
 
 
 def show_info():
