@@ -47,6 +47,21 @@ def collate_all():
         local.collate_actor(actor)
 
 
+@cli.group()
+def refresh():
+    pass
+
+
+@refresh.command(name="actors")
+def refresh_actors():
+    action.refresh_actors()
+
+
+@refresh.command(name="videos")
+def refresh_videos():
+    local.refresh_vedios()
+
+
 ''' --- DB mode ---- '''
 
 

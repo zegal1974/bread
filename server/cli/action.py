@@ -210,6 +210,17 @@ def _show_genres(genres):
                    ', '.join(map(lambda genre: genre.name, genres)))
 
 
+def refresh_actors():
+    # count = Actor.objects.filter(Q(rating__gt=0) | Q(refreshed_at__isnull=False)).count()
+
+    actors = Actor.objects.filter(rating__gt=0)
+
+    for actor in actors:
+        click.echo(f"{actor.name}({actor.sid}): ", nl=False)
+        refresh_actor(actor.sid)
+        click.echo('OK')
+
+
 def refresh_actor(sid: str):
     scraper = JavbusScraper()
     actor = scraper.refresh_actor(sid)

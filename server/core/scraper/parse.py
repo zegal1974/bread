@@ -1,7 +1,6 @@
 import re
 from lxml import etree
 
-
 # def get_number(text: str, default=0) -> int:
 #     """ 转化字符串为整型，忽略后缀的其它字符
 #     """
@@ -61,6 +60,10 @@ def match(context, regex):
 @ns
 def get_id(context):
     link = context.context_node.get('href')
+    if link is None:
+        # print(f"----- {etree.tostring(context.context_node)}")
+        print(context.context_node)
+        return ''
     return link.split('/')[-1]
 
 
@@ -78,12 +81,15 @@ def parse_html(doc, conf: dict) -> dict:
 
 
 def parse_tree(doc, conf: dict):
-    children = doc.xpath(conf['xpath'])
-    # print(children)
-    res = []
     if 'fields' not in conf:
         return None  # TODO：Arguments Error
-    for child in children:
+
+    # print(f"= parse_tree({doc})")
+    children = doc.xpath(conf['xpath'])
+
+    res = []
+    for index, child in enumerate(children):
+        # print(f"> {index}", child)
         node = parse_element(child, conf)
         # print(node)
         if len(node.items()) > 0:
@@ -92,20 +98,22 @@ def parse_tree(doc, conf: dict):
 
 
 def parse_element(doc, conf: dict):
-    node = {}
     if 'fields' not in conf:
-        return None
+        return None  # TODO：Arguments Error
+
+    # print(f"- parse_element({doc})")
+
+    node = {}
     for field in conf['fields']:
         find = etree.XPath(field['xpath'])
         res = find(doc)
+
         # print(field['name'], res)
         if len(res) == 0:
             continue
 
         if 'select' in field:
             node[field['name']] = res[0].xpath(field['select']).strip()
-        # elif 'modifier' in field:
-
         else:
             node[field['name']] = res[0].strip()
 
