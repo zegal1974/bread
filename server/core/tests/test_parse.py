@@ -42,6 +42,8 @@ def test_parse_movie():
         assert movie['code'] == 'IPZZ-120'
         assert movie['published_on'] == '2023-10-06'
         assert movie['length'] == '120'
+        assert movie['cover'] == '9zf8_b.jpg'
+        assert movie['name'] == "テニス終わりの汗だく若妻つむぎさんに密着誘惑で痴女られた昼下がり 明里つむぎ"
 
 
 def test_parse_movie_producer():
@@ -95,6 +97,7 @@ def test_parse_actor_movies():
         # print(movies)
         assert len(movies) == 30
         assert movies[0]['code'] == 'IPZZ-120'
+        assert movies[0]['thumbnail'] == "/pics/thumb/9zf8.jpg"
 
 
 def test_parse_actor_info():

@@ -11,6 +11,7 @@ from core.scraper.parse import parse_element, parse_tree
 from core.scraper.scraper import Scraper
 from core import config
 from core.utils import db
+from core.utils.magnet import get_magnet_hash
 
 
 # from api.utils.net import http_get
@@ -82,8 +83,8 @@ class JavbusScraper(Scraper):
 
     movie_css = {
         'fields': [
-            {'name': 'name', 'xpath': '//div[@class="container"]/h3/text()'},
-            {'name': 'cover', 'xpath': '//div[@class="row movie"]//a/@href'},
+            {'name': 'cover', 'xpath': '//div[@class="row movie"]//a', 'select': 'get_pic()'},
+            {'name': 'name', 'xpath': '//div[@class="row movie"]//a/img/@title'},
             {'name': 'code',
              'xpath': '//div[@class="row movie"]/div[2]/p/span[contains(text(),"識別碼:")]/following::span/text()'},
             {'name': 'published_on',
@@ -300,7 +301,7 @@ class JavbusScraper(Scraper):
         doc = etree.HTML(content)
         data = parse_tree(doc, JavbusScraper.movie_magnets_css)
         for m in data:
-            md = {**m, 'movie': movie}
+            md = {**m, 'movie': movie, 'hash': get_magnet_hash(m['link'])}
             magnet, created = Magnet.objects.update_or_create(hash=m['hash'], defaults=m)
 
     def refresh_actor_movies(self, actor: Actor, force=False):

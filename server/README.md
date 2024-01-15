@@ -17,3 +17,7 @@ with open(output_file, 'r') as file:
   
 print(probe_info)
 ```
+
+### TODO
+
+1. clear magnet

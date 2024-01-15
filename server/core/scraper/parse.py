@@ -1,48 +1,7 @@
 import re
 from lxml import etree
 
-# def get_number(text: str, default=0) -> int:
-#     """ 转化字符串为整型，忽略后缀的其它字符
-#     """
-#     m = re.search('([0-9]+)', text)
-#     if m:
-#         return int(m.group(1))
-#     return default
-#
-#
-# def get_date(text: str) -> str:
-#     m = re.search(r"([0-9-]+)", text)
-#     if m:
-#         return m.group(1)
-#     return ""
-
-
-# def get_id(link: str) -> str:
-#     """ Get the actor's gid or movie's code etc.
-#         :param link: BeautifulSoup document of the link
-#     """
-#     return link.split('/')[-1]
-
-
 DEFAULT_IMAGE_FILENAME = 'nowprinting.gif'
-
-
-def get_pic(link: str) -> str | None:
-    """ Get the actor's gid or movie's code etc.
-        :param link: BeautifulSoup document of the link
-    """
-    pic = link.split('/')[-1]
-    if pic == DEFAULT_IMAGE_FILENAME:
-        return None
-    return pic
-
-
-# FORMAT_SETTINGS = {
-#     'id': get_id,
-#     'avatar': get_pic,
-#     'number': get_number,
-#     'date': get_date,
-# }
 
 ns = etree.FunctionNamespace(None)
 
@@ -65,6 +24,18 @@ def get_id(context):
         print(context.context_node)
         return ''
     return link.split('/')[-1]
+
+
+@ns
+def get_pic(context) -> str | None:
+    """ Get the actor's gid or movie's code etc.
+        :param context: Element
+    """
+    link = context.context_node.get('href')
+    pic = link.split('/')[-1]
+    if pic == DEFAULT_IMAGE_FILENAME:
+        return None
+    return pic
 
 
 def parse_html(doc, conf: dict) -> dict:
@@ -108,7 +79,7 @@ def parse_element(doc, conf: dict):
         find = etree.XPath(field['xpath'])
         res = find(doc)
 
-        # print(field['name'], res)
+        print(field['name'], res)
         if len(res) == 0:
             continue
 

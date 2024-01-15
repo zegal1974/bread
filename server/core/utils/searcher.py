@@ -3,7 +3,6 @@ import os
 import platform
 import re
 import shutil
-import time
 from urllib.parse import urlencode
 
 import backoff
@@ -112,7 +111,7 @@ class Downloader:
                               'Icon=text-html\n'
 
     @staticmethod
-    def download(result, search_history):
+    def download(result):
         release_name = Downloader._sanitize_name('[{Tracker}] {Title}'.format(**result))
 
         # if torrent file is missing, ie. Blutopia
@@ -141,7 +140,7 @@ class Downloader:
                 data = Downloader.desktop_shortcut_format.format(url=result['Link'])
 
         new_name = Downloader._truncate_name(release_name, ext)
-        file_path = os.path.join(config.TORRENT_PATH, new_name + ext)
+        file_path = os.path.join(config.DIR_TORRENTS, new_name + ext)
         file_path = Downloader._validate_path(file_path)
 
         if result['Link'].startswith('magnet:?xt='):
@@ -152,7 +151,7 @@ class Downloader:
             with open(file_path, 'wb') as f:
                 shutil.copyfileobj(response.raw, f)
 
-        HistoryManager.append_to_download_history(result['Details'], result['TrackerId'], search_history)
+        # HistoryManager.append_to_download_history(result['Details'], result['TrackerId'], search_history)
 
     @staticmethod
     def _sanitize_name(release_name):
