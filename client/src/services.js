@@ -1,6 +1,6 @@
 
 
-function getActors(start = 0, page = 1){
+function getActors(start, page){
   return []
 }
 
