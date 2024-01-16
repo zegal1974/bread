@@ -36,4 +36,4 @@ def test_get_torrent_info():
 
 
 def test_deluge_download_torrent():
-    deluge_download_torrent('magnet:?xt=urn:btih:03E02AA634518518BF29148353C860AC8AEDB327&dn=BBAN-422')
+    deluge_download_torrent('magnet:?xt=urn:btih:F89414959099805BF9A4B8104B383A6D96B3E31B&dn=SSIS-875')

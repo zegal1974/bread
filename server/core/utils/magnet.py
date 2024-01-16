@@ -110,21 +110,23 @@ def exec_rpc(magnet):
 
 
 def download_torrent1(url: str):
-    c = Client(host="localhost", port=9091)  # , username="transmission", password="password")
+    # c = Client(host="localhost", port=9091)  # , username="transmission", password="password")
     # torrent_url = "magnet:?xt=urn:btih:e6abf70153d679f4e7d6610440303d23fdc4d25b&dn=SSPD-147-uncensored-HD&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=https%3A%2F%2Fopentracker.i2p.rocks%3A443%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce"
-    torrent_url = "magnet:?xt=urn:btih:311C21C8215A3F493C225B66921DB671CBDB1120&dn=STARS-907"
-    c.add_torrent(torrent_url)
+    # torrent_url = "magnet:?xt=urn:btih:311C21C8215A3F493C225B66921DB671CBDB1120&dn=STARS-907"
+    # c.add_torrent(torrent_url)
 
     # .\aria2c "magnet:?xt=urn:btih:e6abf70153d679f4e7d6610440303d23fdc4d25b&dn=SSPD-147-uncensored-HD&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=https%3A%2F%2Fopentracker.i2p.rocks%3A443%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce"
+    pass
 
 
-from deluge_client import DelugeRPCClient
+from core.deluge_client import DelugeRPCClient
 
 
 def deluge_download_torrent(magnet_link: str):
-    with DelugeRPCClient('127.0.0.1', 12345, 'zegal', 'football') as client:
-        # response = requests.post(base_url + 'queue/add', data={'torrent_ magnet_link': magnet_link}, auth=auth)
-        # status = client.call('core.get_torrents_status', {}, ['name'])
-        # print(status)
-        mlist = client.daemon.get_method_list()
-        print(mlist)
+    client = DelugeRPCClient('127.0.0.1', 58846, 'zegal', 'football')
+    client.connect()
+
+    options = {'download_location': '',  # 设置为空或自定义路径以避免开始下载
+               'auto_managed': False,  # 不自动管理此任务，防止自动开始下载
+               'add_paused': True}  # 添加为暂停状态
+    torrent_id = client.call('core.add_magnet_uri', [magnet_link, options])
