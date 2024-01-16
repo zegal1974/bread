@@ -49,7 +49,7 @@ class RemoteException(DelugeClientException):
 class DelugeRPCClient(object):
     timeout = 20
 
-    def __init__(self, host, port, username, password, decode_utf8=False, automatic_reconnect=True):
+    def __init__(self, host, port, username, password, decode_utf8=True, automatic_reconnect=True):
         self.host = host
         self.port = port
         self.username = username
@@ -66,16 +66,22 @@ class DelugeRPCClient(object):
 
         self.automatic_reconnect = automatic_reconnect
 
+        # context = ssl.create_default_context()
+        # with socket.create_connection((self.host, self.port)) as sock:
+        #     with context.wrap_socket(sock, server_hostname=self.host) as ssock:
+        #         print(ssock.version())
+
         self.request_id = 1
         self.connected = False
         self._create_socket()
 
     def _create_socket(self, ssl_version=None):
         context = ssl.create_default_context()
-        if ssl_version is not None:
-            self._socket = context.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM), ssl_version=ssl_version)
-        else:
-            self._socket = context.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sck:
+            if ssl_version is not None:
+                self._socket = context.wrap_socket(sck, server_hostname=self.host, ssl_version=ssl_version)
+            else:
+                self._socket = context.wrap_socket(sck, server_hostname=self.host)
         self._socket.settimeout(self.timeout)
 
     def connect(self):
@@ -84,6 +90,7 @@ class DelugeRPCClient(object):
         """
         self._connect()
         logger.debug('Connected to Deluge, detecting daemon version')
+        print('Connected to Deluge, detecting daemon version')
         self._detect_deluge_version()
         logger.debug('Daemon version {} detected, logging in'.format(self.deluge_version))
         if self.deluge_version == 2:
@@ -95,9 +102,11 @@ class DelugeRPCClient(object):
 
     def _connect(self):
         logger.info('Connecting to %s:%s' % (self.host, self.port))
+        print('Connecting to %s:%s' % (self.host, self.port))
         try:
             self._socket.connect((self.host, self.port))
         except ssl.SSLError as e:
+            print(e)
             # Note: have not verified that we actually get errno 258 for this error
             if (hasattr(ssl, 'PROTOCOL_SSLv3') and
                     (getattr(e, 'reason', None) == 'UNSUPPORTED_PROTOCOL' or e.errno == 258)):
