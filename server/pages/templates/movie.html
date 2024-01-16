@@ -1,27 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'layout.html' %}
 {% load django_bootstrap5 %}
 
-{% block title %}Movie - {movie.code}{% endblock %}
+{% block title %}Movie - {{movie.code}}{% endblock %}
 
 {% block content %}
 <div class="row movie">
     <div class="col-md-9 screencap">
-        <a class="bigImage" href={movie.cover}>
-            <img src={movie.cover} title={movie.name}/>
+        <a class="bigImage" href={{movie.cover}}>
+            <img src={{movie.cover}} title={{movie.name}}/>
         </a>
     </div>
     <div class="col-md-3 info">
         <p>
             <span class="header">识别码:</span>
-            <span>{movie.code}</span>
+            <span>{{movie.code}}</span>
         </p>
         <p>
             <span class="header">发行日期:</span>
-            {movie.published_on}
+            {{movie.published_on}}
         </p>
         <p>
             <span class="header">长度:</span>
-            {movie.length}分钟
+            {{movie.length}}分钟
         </p>
         <!--        <p>-->
         <!--            <span class="header">导演:</span>-->

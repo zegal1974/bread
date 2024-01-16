@@ -1,14 +1,27 @@
-{% extends 'app/bootstrap.html' %}
+{% extends 'bootstrap.html' %}
 
+{% load static %}
 {% load django_bootstrap5 %}
 
+
+{% block bootstrap5_extra_head %}
+<!-- Font Awesome -->
+<link href="{% static 'fontawesome/css/all.min.css' %}" rel="stylesheet"/>
+<!-- Google Fonts -->
+<!--<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>-->
+<!-- MDB -->
+<link href="{% static 'mdb5-free-standard/css/mdb.min.css' %}" rel="stylesheet"/>
+
+<link href="{% static 'css/layout.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+
 {% block bootstrap5_content %}
-<div class="container">
-    <h1>{% block title %}(no title){% endblock %}</h1>
 
-    <!--        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}-->
+{% block layout_content %}(no content){% endblock %}
 
-    {% block content %}(no content){% endblock %}
-</div>
+<!--    <h1>{% block title %}(no title){% endblock %}</h1>-->
+
+<!--        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}-->
 
 {% endblock %}

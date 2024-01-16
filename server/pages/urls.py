@@ -1,8 +1,11 @@
 from django.urls import path, include
-from pages.views import ActorList
+
+from pages import views
+
+# from pages.views import ActorList
 
 urlpatterns = [
-    path("actors/", ActorList.as_view()),
+    # path("actors/", ActorList.as_view()),
     # path("api/actor/", )
-    path("movie/<int:movie_code>", ),
+    path("movie/<str:movie_code>", views.movie),
 ]
