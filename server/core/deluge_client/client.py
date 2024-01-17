@@ -66,17 +66,15 @@ class DelugeRPCClient(object):
 
         self.automatic_reconnect = automatic_reconnect
 
-        # context = ssl.create_default_context()
-        # with socket.create_connection((self.host, self.port)) as sock:
-        #     with context.wrap_socket(sock, server_hostname=self.host) as ssock:
-        #         print(ssock.version())
-
         self.request_id = 1
         self.connected = False
         self._create_socket()
 
     def _create_socket(self, ssl_version=None):
-        context = ssl.create_default_context()
+        context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sck:
             if ssl_version is not None:
                 self._socket = context.wrap_socket(sck, server_hostname=self.host, ssl_version=ssl_version)

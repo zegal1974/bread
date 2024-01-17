@@ -1,11 +1,6 @@
-import asyncio
-
 from core.utils import magnet
 
-# from torrentool.api import Torrent
-
-
-from core.utils.magnet import download_torrent, download_torrent1, exec_rpc, deluge_download_torrent
+from core.utils.magnet import add_torrent_magnet
 
 
 def test_get_magnet_hash():
@@ -36,4 +31,5 @@ def test_get_torrent_info():
 
 
 def test_deluge_download_torrent():
-    deluge_download_torrent('magnet:?xt=urn:btih:F89414959099805BF9A4B8104B383A6D96B3E31B&dn=SSIS-875')
+    add_torrent_magnet('magnet:?xt=urn:btih:F89414959099805BF9A4B8104B383A6D96B3E31B&dn=SSIS-875')
+    assert 1 == 2
