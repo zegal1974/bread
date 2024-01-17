@@ -7,5 +7,8 @@ from pages import views
 urlpatterns = [
     # path("actors/", ActorList.as_view()),
     # path("api/actor/", )
-    path("movie/<str:movie_code>", views.movie),
+    path("", views.home, name='home'),
+    path("actors", views.actors, name='actors'),
+    path("actors/<str:actor_id>/", views.actor, name='actor'),
+    path("movies/<str:movie_code>", views.movie),
 ]

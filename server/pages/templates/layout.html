@@ -3,10 +3,10 @@
 {% block layout_content %}
 <div id="header" class="app-header">
     {% include "layouts/_sidebar.html" %}
-
     {% include "layouts/_narbar.html" %}
 </div>
 <main style="margin-top: 58px">
+    {% include "layouts/_breadcrumbs.html" %}
     <div class="container pt-4">
         {% block content %}(no content){% endblock %}
     </div>
