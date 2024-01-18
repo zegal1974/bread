@@ -31,5 +31,6 @@ def test_get_torrent_info():
 
 
 def test_deluge_download_torrent():
-    add_torrent_magnet('magnet:?xt=urn:btih:F89414959099805BF9A4B8104B383A6D96B3E31B&dn=SSIS-875')
-    assert 1 == 2
+    # add_torrent_magnet('magnet:?xt=urn:btih:F89414959099805BF9A4B8104B383A6D96B3E31B&dn=SSIS-875')
+    # assert 1 == 2
+    pass

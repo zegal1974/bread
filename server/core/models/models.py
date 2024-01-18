@@ -137,6 +137,7 @@ class Magnet(Model):
         Movie, null=True, related_name='magnets', on_delete=SET_NULL)
     link = CharField(max_length=100, null=True)
     hash = CharField(max_length=100, null=True)
+    name = CharField(max_length=100, null=True)
     size = IntegerField(null=True)
     language = CharField(max_length=100, null=True)
     definition = CharField(max_length=100, null=True)

@@ -9,11 +9,7 @@ import torrentool
 import urllib.request
 import asyncio
 
-from coverage.annotate import os
-# from magnet2torrent import Magnet2Torrent, FailedToFetchException
-from magnet2torrent import Magnet2Torrent, FailedToFetchException, settings
-from magnet2torrent.dht.network import Server as DHTServer
-from transmission_rpc import Client
+import os
 from core.deluge_client import DelugeRPCClient
 
 from core import config

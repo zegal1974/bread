@@ -205,7 +205,7 @@ def movie_show(ctx):
 @click.pass_context
 def movie_refresh(ctx):
     movie = ctx.obj
-    movie = action.refresh_movie(movie)
+    movie = action.refresh_movie(movie.code)
     action.show_movie(movie)
 
 

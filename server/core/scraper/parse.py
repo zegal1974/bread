@@ -55,14 +55,15 @@ def parse_tree(doc, conf: dict):
     if 'fields' not in conf:
         return None  # TODO：Arguments Error
 
-    # print(f"= parse_tree({doc})")
     children = doc.xpath(conf['xpath'])
 
     res = []
     for index, child in enumerate(children):
-        # print(f"> {index}", child)
+        print(f"> {index}", child)
+        print(child.xpath('td/a[3]/@href'))
         node = parse_element(child, conf)
-        # print(node)
+
+        print(node)
         if len(node.items()) > 0:
             res.append(node)
     return res
@@ -72,7 +73,7 @@ def parse_element(doc, conf: dict):
     if 'fields' not in conf:
         return None  # TODO：Arguments Error
 
-    # print(f"- parse_element({doc})")
+    print(f"- parse_element({doc})")
 
     node = {}
     for field in conf['fields']:

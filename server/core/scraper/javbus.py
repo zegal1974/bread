@@ -130,29 +130,26 @@ class JavbusScraper(Scraper):
     genres_css = {
         'xpath': '//span[@class="genre"]',
         'fields': [
-            {'name': 'sid',
-             'xpath': 'label/a', 'select': 'get_id()'},
-            {'name': 'name',
-             'xpath': 'label/a/text()'},
+            {'name': 'sid', 'xpath': 'label/a', 'select': 'get_id()'},
+            {'name': 'name', 'xpath': 'label/a/text()'},
         ]
     }
 
     movie_actors_css = {
         'xpath': '//span[@class="genre"]',
         'fields': [
-            {'name': 'sid',
-             'xpath': './a', 'select': 'get_id()'},
-            {'name': 'name',
-             'xpath': 'a/text()'},
+            {'name': 'sid', 'xpath': './a', 'select': 'get_id()'},
+            {'name': 'name', 'xpath': 'a/text()'},
         ]
     }
 
     movie_magnets_css = {
         'xpath': '//tr',
         'fields': [
-            {'name': 'link', 'xpath': 'td/a[rel="nofollow"][0]/@href'},
-            {'name': 'size', 'xpath': 'td/a[rel="nofollow"][1]'},
-            {'name': 'shared_on', 'xpath': 'td/a[rel="nofollow"][2]/text()'}
+            {'name': 'link', 'xpath': '/td/a[1]/@href'},
+            {'name': 'name', 'xpath': '/td/a[1]/text()'},
+            {'name': 'size', 'xpath': '/td/a[2]/text()'},
+            {'name': 'shared_on', 'xpath': '/td/a[3]/text()'}
         ]
     }
 
@@ -248,7 +245,9 @@ class JavbusScraper(Scraper):
             db.update_actor_movies(actor, movies)
 
     def refresh_movie(self, code: str) -> Movie | None:
+        print(self.url_movie(code))
         content = self.get_html(self.url_movie(code))
+        print(content)
         if content is None:
             return None
         doc = etree.HTML(content)
@@ -298,11 +297,20 @@ class JavbusScraper(Scraper):
 
     def refresh_movie_torrents(self, movie: Movie):
         content = self.get_html(self.url_magnets(movie))
+        print(content)
+        magnets = self.parse_movie_torrents(movie, content)
+        return magnets
+
+    def parse_movie_torrents(self, movie, content):
         doc = etree.HTML(content)
         data = parse_tree(doc, JavbusScraper.movie_magnets_css)
+        magnets = []
         for m in data:
             md = {**m, 'movie': movie, 'hash': get_magnet_hash(m['link'])}
             magnet, created = Magnet.objects.update_or_create(hash=m['hash'], defaults=m)
+            if created:
+                magnets.append(magnet)
+        return magnets
 
     def refresh_actor_movies(self, actor: Actor, force=False):
         """ 刷新指定 actor 的 movies 的详细信息
