@@ -3,12 +3,4 @@
 {% endfor %}
 
 <!-- 分页导航 -->
-<div class="pagination">
-    {% if page_movies.has_previous %}
-    <a href="?page={{ page_movies.previous_page_number }}">上一页</a>
-    {% endif %}
-    <span class="current-page">{{ page_movies.number }}</span>
-    {% if page_books.has_next %}
-    <a href="?page={{ page_movies.next_page_number }}">下一页</a>
-    {% endif %}
-</div>
+{% include 'fragments/_pagination.html' with page_objects=page_movies %}

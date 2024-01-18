@@ -26,11 +26,6 @@ class JavbusScraper(Scraper):
         ]
     }
 
-    # MAP_MOVIE_ATTRS = {
-    #     "生日": "birthday", "年齡": "age", "身高": "height",
-    #     "罩杯": "cups", "胸圍": "bust", "腰圍": "waist", '臀圍': 'hip',
-    #     "出生地": "homeland", "愛好": "hobbies",
-    # }
     # TODO:
     actor_css = {
         'fields': [

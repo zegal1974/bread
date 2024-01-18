@@ -1,14 +1,14 @@
+{% extends 'layout.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}Actors{% endblock %}
+
+{% block content %}
+
 {% for actor in page_actors.object_list %}
-<div>{{ actor.name }}</div>
+{% include 'fragments/_actor.html' with actor=actor %}
 {% endfor %}
 
-<!-- 分页导航 -->
-<div class="pagination">
-    {% if page_actors.has_previous %}
-    <a href="?page={{ page_actors.previous_page_number }}">上一页</a>
-    {% endif %}
-    <span class="current-page">{{ page_actors.number }}</span>
-    {% if page_actors.has_next %}
-    <a href="?page={{ page_actors.next_page_number }}">下一页</a>
-    {% endif %}
-</div>
+{% include 'fragments/_pagination.html' with page_objects=page_actors %}
+
+{% endblock %}

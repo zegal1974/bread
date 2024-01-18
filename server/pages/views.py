@@ -20,18 +20,18 @@ def home(request):
 
 def actors(request):
     acts = Actor.objects.all()
-
     paginator = Paginator(acts, 30)
 
     page = request.GET.get('page')
     if page and page.isdigit():
-        start_page = int(page) - 1
+        start_page = int(page)
     else:
-        start_page = 0
+        start_page = 1
 
     actors_page = paginator.get_page(start_page)
 
-    context = {'actors': actors_page}
+    context = {'actors_page': actors_page}
+
     return render(request, 'actors.html', context)
 
 
@@ -40,10 +40,25 @@ def actor(request, actor_id):
     breadcrumbs = [
         {'url': reverse('home'), 'title': '首页'},
         {'url': reverse('actors'), 'title': '演员'},
-        {'url': '', 'title': a.actor_id},  # 当前页面不提供URL，仅显示标题
+        {'url': '', 'title': a.name},  # 当前页面不提供URL，仅显示标题
     ]
     context = {'actor': a, 'breadcrumbs': breadcrumbs}
     return render(request, 'actor.html', context)
+
+
+def movies(request):
+    ms = Movie.objects.all()
+    pagination = Paginator(ms, 30)
+    page = request.GET.get('page')
+    if page and page.isdigit() and int(page) > 0:
+        start_page = int(page)
+    else:
+        start_page = 1
+
+    page_movies = pagination.get_page(start_page)
+    context = {'page_movies': page_movies}
+    print(page_movies.number, page_movies.has_previous(), page_movies.has_next(), page_movies.paginator.page_range)
+    return render(request, 'movies.html', context)
 
 
 def movie(request, movie_code):
