@@ -19,7 +19,7 @@ def home(request):
 
 
 def actors(request):
-    acts = Actor.objects.all()
+    acts = Actor.objects.all().order_by('-rating')
     paginator = Paginator(acts, 30)
 
     page = request.GET.get('page')
@@ -28,10 +28,8 @@ def actors(request):
     else:
         start_page = 1
 
-    actors_page = paginator.get_page(start_page)
-
-    context = {'actors_page': actors_page}
-
+    page_actors = paginator.get_page(start_page)
+    context = {'page_actors': page_actors}
     return render(request, 'actors.html', context)
 
 

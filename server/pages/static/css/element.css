@@ -1,0 +1,24 @@
+.card {
+  --mdb-card-border-radius: 0;
+}
+
+.avatar-card {
+  margin: 10px;
+  width: 125px;
+  padding: 0px;
+}
+
+.movie-card {
+  margin: 10px;
+  width: 147px;
+  padding: 0px;
+}
+
+.card-body {
+  padding: 10px;
+
+  .card-text {
+    word-wrap: break-word;
+    font-size: 0.8em;
+  }
+}
