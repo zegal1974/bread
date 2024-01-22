@@ -1,6 +1,9 @@
 body {
   background-color: #fbfbfb;
 }
+
+
+
 @media (min-width: 991.98px) {
   main {
     padding-left: 240px;
@@ -23,6 +26,7 @@ body {
     width: 100%;
   }
 }
+
 .sidebar .active {
   border-radius: 5px;
   box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);

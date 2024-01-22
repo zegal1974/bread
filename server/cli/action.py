@@ -263,3 +263,8 @@ def refresh_movie(code: str):
 def refresh_actor_movies(actor: Actor):
     scraper = JavbusScraper()
     scraper.refresh_actor_movies(actor)
+
+
+def download_avatars():
+    for actor in Actor.objects.all():
+        download_avatar(actor.sid)

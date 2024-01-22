@@ -11,7 +11,7 @@ from core.utils.local import path_avatar, path_thumbnail, path_cover
 def download_avatar(sid: str):
     url = url_avatar(sid)
     path = path_avatar(sid)
-    download_file.delay(url, path)
+    download_file(url, path)
 
 
 def download_thumbnail(movie: Movie):
@@ -30,10 +30,9 @@ def download_cover(movie: Movie):
 
 @job('low')
 def download_file(url, path) -> bool:
-    print(f"Downloading {url} to {path}")
     if os.path.exists(path):
         return True
-
+    print(f"Downloading {url} to {path}")
     response = requests.get(url)
     if response.status_code == 200:
         with open(path, 'wb') as f:

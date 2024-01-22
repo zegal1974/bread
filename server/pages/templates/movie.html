@@ -12,15 +12,15 @@
     </div>
     <div class="col-md-3 info">
         <p>
-            <span class="header">识别码:</span>
+            <strong class="header">识别码:</strong>
             <span>{{movie.code}}</span>
         </p>
         <p>
-            <span class="header">发行日期:</span>
-            {{movie.published_on}}
+            <strong class="header">发行日期:</strong>
+            {{ movie.published_on|date:'Y-m-d' }}
         </p>
         <p>
-            <span class="header">长度:</span>
+            <strong class="header">长度:</strong>
             {{movie.length}}分钟
         </p>
         <!--        <p>-->

@@ -36,13 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'corsheaders',
+    'sass_processor',
     'rest_framework',
     'django_bootstrap5',
     'django_rq',
     'api.apps.ApiConfig',
     'cli.apps.CliConfig',
     'core.apps.CoreConfig',
-    'dht.apps.DhtConfig'
+    'dht.apps.DhtConfig',
     'pages.apps.PagesConfig',
 ]
 
@@ -120,9 +121,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [
+#     os.path.join(PROJECT_PATH, 'static'),
+# ]
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
 
 # Default primary key field type
@@ -176,28 +183,36 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 500,
     }
 }
+#
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "rq_console": {
+#             "format": "%(asctime)s %(message)s",
+#             "datefmt": "%H:%M:%S",
+#         },
+#     },
+#     "handlers": {
+#         "rq_console": {
+#             "level": "DEBUG",
+#             "class": "rq.logutils.ColorizingStreamHandler",
+#             "formatter": "rq_console",
+#             "exclude": ["%(asctime)s"],
+#         },
+#     },
+#     'loggers': {
+#         "rq.worker": {
+#             "handlers": ["rq_console", "sentry"],
+#             "level": "DEBUG"
+#         },
+#     }
+# }
+SASS_PROCESSOR_ENABLED = True
+# SASS_PROCESSOR_AUTO_INCLUDE = True
+SASS_PROCESSOR_INCLUDE_FILE_PATTERN = r'^.+\.scss$'
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "rq_console": {
-            "format": "%(asctime)s %(message)s",
-            "datefmt": "%H:%M:%S",
-        },
-    },
-    "handlers": {
-        "rq_console": {
-            "level": "DEBUG",
-            "class": "rq.logutils.ColorizingStreamHandler",
-            "formatter": "rq_console",
-            "exclude": ["%(asctime)s"],
-        },
-    },
-    'loggers': {
-        "rq.worker": {
-            "handlers": ["rq_console", "sentry"],
-            "level": "DEBUG"
-        },
-    }
-}
+SASS_PRECISION = 8
+
+# SASS_OUTPUT_STYLE = 'compact'

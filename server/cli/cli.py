@@ -49,6 +49,17 @@ def collate_all():
         local.collate_actor(actor)
 
 
+@cli.command
+def download_avatars():
+    action.download_avatars()
+
+
+@cli.command
+@click.argument('aid')
+def download_avatar(aid: str):
+    action.download_avatar(aid)
+
+
 @cli.group()
 def refresh():
     pass
@@ -75,7 +86,13 @@ def refresh_magnets():
     magnet.refresh_magnets()
 
 
-# @refresh.command(name="video")
+@refresh.command(name="avatars")
+def refresh_avatars():
+    local.refresh_avatars()
+
+
+# @refresh.command(name="video")\
+
 # def refresh_video():
 #     local.refresh_video()
 

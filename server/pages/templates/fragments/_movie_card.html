@@ -7,10 +7,11 @@
     </a>
     <div class="card-body">
         <div class="card-text text-center">
-            <span>{{movie.name}}</span>
-            <br></br>
-            <small>{{movie.code}}</small>&nbsp;/&nbsp;
-            <small>{{movie.published_on}}</small>
+            <span>{{ movie.name }}</span>
+            <div>
+                <span class="text-danger">{{ movie.code }}</span> /<span class="text-danger">
+                {{ movie.published_on|date:'Y-m-d' }}</span>
+            </div>
         </div>
     </div>
 </div>

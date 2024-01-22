@@ -157,7 +157,19 @@ def refresh_videos():
 
                 video, created = Video.objects.update_or_create(path=path, name=basename, defaults=info)
 
+
 # def refresh_video():
 #     file = 'e:\\data\\jp\\楓カレン\\ipx-596ch.mp4'
 #     info = get_video_info(file)
 #     return info
+
+
+def refresh_avatars():
+    for file in os.listdir(config.DIR_ACTOR_AVATARS):
+        if base.is_image(file):
+            name = base.get_basename(file)
+            sid = name.split('.')[0]
+            if Actor.objects.filter(sid=sid).exists():
+                actor = Actor.objects.get(sid=sid)
+                actor.avatar = file
+                actor.save()
