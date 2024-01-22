@@ -1,6 +1,10 @@
 
 
-function getActors(start = 0, page = 1){
+function getActors(start, page){
+  console.log("getActors called with start: " + start + " and page: " + page)
+  getActorsFromServer(start, page).then(response => {
+    console.log("getActors response: " + response)
+  })
   return []
 }
 

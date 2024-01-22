@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}Movie - {{movie.code}}{% endblock %}
+
+{% block content %}
+<div class="row movie">
+    <div class="col-md-9 screencap">
+        <a class="bigImage" href={{movie.cover}}>
+            <img src={{movie.cover}} title={{movie.name}}/>
+        </a>
+    </div>
+    <div class="col-md-3 info">
+        <p>
+            <span class="header">识别码:</span>
+            <span>{{movie.code}}</span>
+        </p>
+        <p>
+            <span class="header">发行日期:</span>
+            {{movie.published_on}}
+        </p>
+        <p>
+            <span class="header">长度:</span>
+            {{movie.length}}分钟
+        </p>
+        <!--        <p>-->
+        <!--            <span class="header">导演:</span>-->
+        <!--            <Director director={this.props.movie.director}/>-->
+        <!--        </p>-->
+        <!--        <p>-->
+        <!--            <span class="header">发行商:</span>-->
+        <!--            <Publisher publisher={this.props.movie.publisher}/>-->
+        <!--        </p>-->
+        <!--        <p>-->
+        <!--            <span class="header">制片商:</span>-->
+        <!--            <Productor productor={this.props.movie.productor}/>-->
+        <!--        </p>-->
+        <!--        <p>-->
+        <!--            <span class="header">系列:</span>-->
+        <!--            <Series series={this.props.movie.series}/>-->
+        <!--        </p>-->
+        <!--        <p class="header">-->
+        <!--            <span class="header">类别:</span>-->
+        <!--            <Genres genres={this.props.movie.genres}/>-->
+        <!--        </p>-->
+    </div>
+</div>
+{% endblock %}

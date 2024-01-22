@@ -1,0 +1,16 @@
+{% load url_tags %}
+<div class="card movie-card">
+    <a class="c" href="{% url 'movie' movie_code=movie.code %}">
+        <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+            <img class="img-fluid" src={{ movie.thumb|url_movie_thumb }} title={{movie.code}}/>
+        </div>
+    </a>
+    <div class="card-body">
+        <div class="card-text text-center">
+            <span>{{movie.name}}</span>
+            <br></br>
+            <small>{{movie.code}}</small>&nbsp;/&nbsp;
+            <small>{{movie.published_on}}</small>
+        </div>
+    </div>
+</div>

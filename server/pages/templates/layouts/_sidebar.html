@@ -1,0 +1,17 @@
+{% load url_tags %}
+
+<nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+        <div class="list-group list-group-flush mx-3 mt-4">
+            {% active_menu menu_items as active_menu_items %}
+            {% for item in active_menu_items %}
+            <a href="{{ item.url }}"
+               class="list-group-item list-group-item-action py-2 ripple {% if item.active %}active{% endif %}"
+               aria-current="true">
+                <i class="fas fa-{{ item.icon }} fa-fw me-3"></i>
+                <span>{{ item.title }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</nav>

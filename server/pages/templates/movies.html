@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}Movie - {{movie.code}}{% endblock %}
+
+{% block content %}
+
+{% include 'fragments/_movies.html' with page_movies=page_movies %}
+
+{% endblock %}

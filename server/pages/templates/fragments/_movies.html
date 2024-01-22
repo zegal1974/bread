@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="row actors">
+        {% for movie in page_movies.object_list %}
+
+        {% include 'fragments/_movie_card.html' with movie=movie%}
+
+        {% empty %}
+        <p>暂无记录</p>
+        {% endfor %}
+    </div>
+</div>
+{% include 'fragments/_pagination.html' with page_objects=page_movies %}

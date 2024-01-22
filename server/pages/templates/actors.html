@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+{% include 'fragments/_pagination.html' with page_objects=page_actors %}
+
+<div class="container">
+    <div class="row actors">
+        {% for actor in page_actors.object_list %}
+        {% include 'fragments/_actor_card.html' with actor=actor %}
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'fragments/_pagination.html' with page_objects=page_actors %}
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'bootstrap.html' %}
+
+{% load static %}
+{% load django_bootstrap5 %}
+
+
+{% block bootstrap5_extra_head %}
+<!-- Font Awesome -->
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon-96x96.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+
+<link href="{% static 'fontawesome/css/all.min.css' %}" rel="stylesheet"/>
+<!-- Google Fonts -->
+<!--<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>-->
+<!-- MDB -->
+<link href="{% static 'mdb5-free-standard/css/mdb.min.css' %}" rel="stylesheet"/>
+
+<link href="{% static 'css/layout.css' %}" rel="stylesheet"/>
+<link href="{% static 'css/element.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+
+{% block bootstrap5_content %}
+
+{% block layout_content %}(no content){% endblock %}
+
+<!--  <h1>{% block title %}(no title){% endblock %}</h1>-->
+
+<!--  {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}-->
+
+{% endblock %}

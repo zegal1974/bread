@@ -1,0 +1,35 @@
+<nav aria-label="pagination">
+    <ul class="pagination d-flex justify-content-center">
+        {% if page_objects.has_previous %}
+        <li class="page-item" aria-disabled="true">
+            <a class="page-link" href="?page={{ page_objects.previous_page_number }}">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% endif %}
+        {% for i in page_objects.paginator.page_range %}
+        {% if page_objects.number == i %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">
+                {{ page_objects.number }}
+                <span class="visually-hidden">(current)</span>
+            </a>
+        </li>
+        {% elif i >= page_objects.number|add:'-5' and i <= page_objects.number|add:'5' %}
+        <li class="page-item" aria-current="page">
+            <a class="page-link" href="?page={{i}}">
+                {{ i }}
+            </a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_objects.has_next %}
+        <li class="page-item" aria-disabled="true">
+            <a class="page-link" href="?page={{ page_objects.next_page_number }}">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
