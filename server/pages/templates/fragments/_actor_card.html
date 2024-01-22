@@ -1,7 +1,7 @@
 {% load url_tags %}
 
-<div class="card avatar-bard">
-    <a class="c" href="{% url 'actor' id=actor.id %}">
+<div class="card actor-card">
+    <a class="c" href="{% url 'actor' actor_id=actor.id %}">
         <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
 
             <img class="img-fluid" src={{ actor.avatar|url_avatar }} title={{actor.name}}/>

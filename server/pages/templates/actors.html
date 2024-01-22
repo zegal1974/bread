@@ -2,7 +2,9 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-<div>{{page_actors.object_list.count}}</div>
+
+{% include 'fragments/_pagination.html' with page_objects=page_actors %}
+
 <div class="container">
     <div class="row actors">
         {% for actor in page_actors.object_list %}

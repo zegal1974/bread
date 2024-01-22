@@ -1,17 +1,7 @@
 from django import template
-from django.template.loader import select_template
-
-from core.models import Producer, Actor
 
 register = template.Library()
 
-
-# @register.simple_tag()
-# def render_producer(context, producer: Producer):
-#     if not producer:
-#         return ""
-#
-#     return ""
 
 @register.filter
 def url_avatar(actor_link):
@@ -27,3 +17,18 @@ def url_movie_thumb(thumb_link):
         return thumb_link
     else:
         return "https://dummyimage.com/147x200/caf4fa/"
+
+
+@register.simple_tag(takes_context=True)
+def active_menu(context, menu_items):
+    request = context['request']
+    current_path = request.path_info
+
+    for item in menu_items:
+        # current_path.startswith(item['url'])
+        if current_path == item['url']:
+            item['active'] = True
+        else:
+            item['active'] = False
+
+    return menu_items
