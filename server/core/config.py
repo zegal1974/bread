@@ -19,6 +19,11 @@ MAX_CONCURRENT = 16
 SAVE_PATH = "d:\\tools\\aria2"
 
 DELAY = 10
-DIR_TORRENTS = "d:\\down\\torrents"
+DIR_TORRENTS = "d:\\bread\\torrents"
+DIR_TORRENT_SOURCES = ["d:\\down", "d:\\downloads", "C:\\Users\\shaofei\\AppData\\Roaming\\deluge\\state"]
 DIR_TEMP = "d:\\down\\tmp"
 TRACKERS = []
+
+DIR_ACTOR_AVATARS = "d:\\bread\\images\\avatars"
+DIR_MOVIE_THUMBNAILS = "d:\\bread\\images\\thumbnails"
+DIR_MOVIE_COVERS = "d:\\bread\\images\\covers"

@@ -1,6 +1,7 @@
 from core.scraper.javbus import JavbusScraper
 from core.scraper.parse import parse_element, parse_tree
 from lxml import etree
+import xml.etree.ElementTree as ET
 
 
 def test_get_id():
@@ -11,40 +12,6 @@ def test_get_id():
 #     assert get_number('123米') == 123
 #     assert get_number('T123米') == 123
 #     assert get_number('米') == 0
-
-MHTML = """
-<tr>
-  <td><a href='http://test.com/abc'>ABC</a></td>
-  <td><a href='http://test.com/abc1'>ABC1</a></td>
-  <td><a href='http://test.com/abc2'>ABC2</a></td>
-</tr>
-<tr>
-  <td><a href='http://test.com/def'>DEF</a></td>
-  <td><a href='http://test.com/def1'>DEF1</a></td>
-  <td><a href='http://test.com/def2'>DEF2</a></td>
-</tr>
-"""
-
-
-def test_parse_tree_test():
-    doc = etree.HTML(MHTML)
-    node = doc.xpath('//tr')[0]
-    print(node)
-    print(node.xpath('./td/a[1]'))
-    print(node.xpath('./td/a[last()]'))
-    print(node.xpath('td/a[3]'))
-    print(node.xpath('td/a[1]/@href'))
-    link = node.xpath('/td/a[1]/@href')
-    link1 = node.xpath('/td/a[2]/@href')
-    name = node.xpath('/td/a[1]/text()')
-    name1 = node.xpath('/td/a[2]/text()')
-    name2 = node.xpath('/td/a[3]/text()')
-    assert link == 'http://test.com/abc'
-    assert link1 == 'http://test.com/abc1'
-    assert name == 'ABC'
-    assert name1 == 'ABC1'
-    assert name2 == 'ABC2'
-    assert 1 == 2
 
 
 html = """
@@ -125,22 +92,11 @@ def test_parse_movie_actors():
 
 
 def test_parse_movie_magnets():
-    with open('core/tests/files/magnets1.html', 'r', encoding='UTF-8') as f:
+    with open('core/tests/files/magnets.html', 'r', encoding='UTF-8') as f:
         doc = etree.HTML(f.read())
-        # magnets = parse_tree(doc, JavbusScraper.movie_magnets_css)
-        # assert len(magnets) == 1
-        # assert magnets[0]['sid'] == 'qs6'
-
-
-def test_parse_movie_magnets1():
-    with open('core/tests/files/magnets1.html', 'r', encoding='UTF-8') as f:
-        doc = etree.HTML(f.read())
-        tr = doc.xpath('//tr')[0]
-        # print(tr.xpath('./td/a[1]'))
-        print(tr.xpath('./td/a[@rel="nofollow"][1]'))
-        link = tr.xpath('td/a[2]/text()')
-        print(link)
-        assert link == 'http://test.com/abc'
+        magnets = parse_tree(doc, JavbusScraper.movie_magnets_css)
+        assert len(magnets) == 18
+        assert magnets[0]['link'] == 'magnet:?xt=urn:btih:C51925A78553AE94F068A32F27EC67860A73AD5F&dn=MIAA-837_CH.HD'
 
 
 def test_parse_actor_movies():

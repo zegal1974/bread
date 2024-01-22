@@ -1,6 +1,8 @@
 import json
 import os
 import re
+from typing import Tuple
+
 from core.models.models import Movie
 
 URL_BASE = "https://www.dmmsee.lol"
@@ -41,6 +43,10 @@ def url_actor(sid: str, page=1) -> str:
         return URL_ACTOR % sid
     else:
         return URL_ACTOR_PAGE % (sid, page)
+
+
+def url_avatar(sid: str) -> str:
+    return f"{URL_BASE}/pics/actress/{sid}_a.jpg"
 
 
 def url_movie(code: str) -> str:
@@ -93,7 +99,7 @@ def data_filter(data: dict, fields: tuple) -> dict:
     return dict(filter(lambda x: x[0] in fields, data.items()))
 
 
-def get_code(filename: str) -> (str, int):
+def get_code(filename: str) -> str | None:
     """ 从文件名中获取 Movie 的 code
        :param filename:
        :return: return the (prefix, number), 如果没有检测到，返回 (None, None)
@@ -108,8 +114,8 @@ def get_code(filename: str) -> (str, int):
         if len(num) <= 6 and len(pre) <= 4:
             if len(num) > 3:
                 num = '%03d' % int(num)
-        return match.group(2)[::-1].upper(), num
-    return None, None
+        return f"{match.group(2)[::-1].upper()}-{num}"
+    return None
 
 
 def code(prefix: str, number: str) -> str:
@@ -118,6 +124,12 @@ def code(prefix: str, number: str) -> str:
        :param number:
     """
     return f"{prefix.upper()}-{number}"
+
+
+def decode(movie_code: str) -> tuple[str, str]:
+    pre = movie_code.split('-')[0]
+    num = movie_code.split('-')[1]
+    return pre, num
 
 
 def is_image(filename: str) -> bool:
@@ -140,14 +152,14 @@ def scan_path(path: str) -> dict:
     results = {}
     for root, folders, files in os.walk(path):
         for f in files:
-            pre, num = get_code(f)
+            code = get_code(f)
             ft = get_file_type(f)
-            if pre is None or ft == FILETYPE_OTHER:
+            if code is None or ft == FILETYPE_OTHER:
                 continue
-            cd = code(pre, num)
-            results[cd] = results.get(cd, {})
-            results[cd][ft] = results[cd].get(ft, [])
-            results[cd][ft].append(f)
+
+            results[code] = results.get(code, {})
+            results[code][ft] = results[code].get(ft, [])
+            results[code][ft].append(f)
     return results
 
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-from django.db.models import Model
+from django.db.models import Model, OneToOneField
 from django.db.models import ForeignKey, TextField, CharField, IntegerField, DateField, DateTimeField, \
     SET_NULL, FloatField, ManyToManyField
 
@@ -132,6 +132,18 @@ class Video(Model):
     bit_rate = IntegerField(default=0)
 
 
+class Torrent(Model):
+    hash = CharField(max_length=100, db_index=True, unique=True)
+    filename = CharField(max_length=100, null=True)
+    name = CharField(max_length=100, null=True)
+    number = IntegerField(null=True)
+    size = IntegerField(null=True)
+    published_at = DateTimeField(null=True)
+    created_on = DateField(null=True)
+
+    # movies = ManyToManyField(Movie, backref='torrents')
+
+
 class Magnet(Model):
     movie = ForeignKey(
         Movie, null=True, related_name='magnets', on_delete=SET_NULL)
@@ -142,15 +154,4 @@ class Magnet(Model):
     language = CharField(max_length=100, null=True)
     definition = CharField(max_length=100, null=True)
     shared_on = DateField(null=True)
-
-
-class Torrent(Model):
-    hash = CharField(max_length=100, db_index=True, unique=True)
-    filename = CharField(max_length=100, null=True)
-    name = CharField(max_length=100, null=True)
-    number = IntegerField(null=True)
-    size = IntegerField(null=True)
-    published_at = DateTimeField(null=True)
-    created_at = DateTimeField(null=True)
-
-    # movies = ManyToManyField(Movie, backref='torrents')
+    torrent = OneToOneField(Torrent, null=True, on_delete=SET_NULL)

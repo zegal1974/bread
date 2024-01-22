@@ -8,6 +8,9 @@ from core.utils.base import load_data, save_data
 FIELDS_MOVIE = ('name', 'code', 'code_prefix', 'code_number', 'gid',
                 'thumbnail', 'cover', 'length', 'rating', 'published_on')
 
+FIELDS_TORRENT = ('link', 'hash', 'name', 'filename', 'size',
+                  'created_on', 'published_at')
+
 
 def update_movie(data: dict) -> Movie:
     # TODO: add to handle when movie's key don't continue 'code':

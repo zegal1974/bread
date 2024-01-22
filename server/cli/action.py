@@ -3,12 +3,14 @@ import os
 import click
 import rich
 from rich.table import Table
+
+from core.jobs.download import download_avatar, download_thumbnail, download_cover
 from core.models.models import Actor, Director, Genre, Magnet, Movie, Producer, Publisher, Series, Torrent, Video
 from django.db.models import Q, Count
 
 from core.scraper.javbus import JavbusScraper
 
-from core.utils import base, checker
+from core.utils import base, checker, magnet
 from core.utils.checker import checkers
 
 
@@ -221,7 +223,7 @@ def _show_movie_videos(movie: Movie):
         table.add_column('name')
 
         for index, video in enumerate(movie.videos.all()):
-            table.add_row(video.codec, video.d, video.path, video.name)
+            table.add_row(video.codec, video.definition, video.path, video.name)
 
         rich.print(table)
 
@@ -240,34 +242,24 @@ def refresh_actors():
 def refresh_actor(sid: str):
     scraper = JavbusScraper()
     actor = scraper.refresh_actor(sid)
+    download_avatar(actor.sid)
     return actor
 
 
 def refresh_movie(code: str):
     scraper = JavbusScraper()
     movie = scraper.refresh_movie(code)
+    download_thumbnail(movie)
+    download_cover(movie)
+    # for m in movie.magnets.all():
+    #     try:
+    #         magnet.download_torrent_file(m.link)
+    #     except Exception as e:
+    #         print(e)
+    #         continue
     return movie
-    # TODO: magnets
 
 
 def refresh_actor_movies(actor: Actor):
     scraper = JavbusScraper()
     scraper.refresh_actor_movies(actor)
-
-
-def run_all_checkers():
-    """ Run all checkers of registered.
-    """
-    click.echo("Run the actor check-list.")
-    if len(checkers['actor']) > 0:
-        checker.run_actor_checkers()
-    click.echo("Run the movie check-list.")
-    if len(checkers['movie']) > 0:
-        checker.run_movie_checkers()
-    click.echo("Run the video check-list.")
-    if len(checkers['video']) > 0:
-        checker.run_video_checkers()
-    click.echo("Run the other check-list.")
-    if len(checkers['other']) > 0:
-        # run_movie_checkers()
-        pass

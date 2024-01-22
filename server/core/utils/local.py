@@ -3,6 +3,7 @@ import pathlib
 import shutil
 import ffmpeg
 
+from core import config
 from core.models import Actor, Torrent, Video, Movie
 
 from core.utils import base
@@ -23,11 +24,12 @@ def walk_dir(path: str) -> dict:
     results = {}
     for root, folders, filenames in os.walk(path):
         for filename in filenames:
-            prefix, number = base.get_code(filename)
-            if prefix is not None and number is not None:
-                code = base.code(prefix, number)
-                if code not in results:
-                    results[code] = []
+            code = base.get_code(filename)
+            if code is None:
+                continue
+            if code not in results:
+                results[code] = [os.path.join(root, filename)]
+            else:
                 results[code].append(os.path.join(root, filename))
     return results
 
@@ -38,6 +40,20 @@ def ch_dir(path: str):
     if not os.access(path, os.F_OK):
         os.makedirs(path)
     os.chdir(path)
+
+
+def path_avatar(sid: str) -> str:
+    return os.path.join(config.DIR_ACTOR_AVATARS, f"{sid}.jpg")
+
+
+def path_thumbnail(code: str) -> str:
+    pre, number = base.decode(code)
+    return os.path.join(config.DIR_MOVIE_THUMBNAILS, pre, f"{code}_t.jpg")
+
+
+def path_cover(code: str) -> str:
+    pre, number = base.decode(code)
+    return os.path.join(config.DIR_MOVIE_COVERS, pre, f"{code}_c.jpg")
 
 
 def move_to_jav():
@@ -127,18 +143,19 @@ def refresh_videos():
             if base.is_movie(file):
                 path = os.path.dirname(file)
                 basename = os.path.basename(file)
-                video, created = Video.objects.get_or_create(path=path, name=basename)
-                if created:
-                    code = base.get_code(basename)
-                    movie, m_created = Movie.objects.get_or_create(code=code)
-                    if m_created:
-                        # TODO refresh movie.
-                        pass
-                    video.movie = movie
-                print(file)
+                # print(file)
                 info = get_video_info(file)
-                video.__dict__.update(**info)
-                video.save()
+
+                code = base.get_code(basename)
+                movie, m_created = Movie.objects.get_or_create(code=code)
+                if m_created:
+                    # TODO refresh movie.
+                    pass
+                info['movie'] = movie
+
+                info['size'] = os.path.getsize(file)
+
+                video, created = Video.objects.update_or_create(path=path, name=basename, defaults=info)
 
 # def refresh_video():
 #     file = 'e:\\data\\jp\\楓カレン\\ipx-596ch.mp4'

@@ -4,11 +4,12 @@ from django.db.models import Q
 from core.models.models import Actor, Movie
 
 from cli import action
+from core.utils.checker import run_all_checkers
 from core.utils.db import db_restore
 from core.utils.searcher import Searcher, Downloader
 
 from .repl import repl
-from core.utils import local
+from core.utils import local, magnet
 
 
 @click.group(invoke_without_command=True, context_settings={})
@@ -58,9 +59,20 @@ def refresh_actors():
     action.refresh_actors()
 
 
+@refresh.command(name="movie")
+@click.argument('sid')
+def refresh_movie_by_sid(sid):
+    action.refresh_movie(sid)
+
+
 @refresh.command(name="videos")
 def refresh_videos():
     local.refresh_videos()
+
+
+@refresh.command(name="magnets")
+def refresh_magnets():
+    magnet.refresh_magnets()
 
 
 # @refresh.command(name="video")
@@ -70,7 +82,7 @@ def refresh_videos():
 
 @cli.command()
 def check():
-    action.run_all_checkers()
+    run_all_checkers()
 
 
 ''' --- DB mode ---- '''

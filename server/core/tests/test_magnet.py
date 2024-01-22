@@ -1,6 +1,6 @@
 from core.utils import magnet
 
-from core.utils.magnet import add_torrent_magnet
+# from core.utils.magnet import add_torrent_magnet
 
 
 def test_get_magnet_hash():

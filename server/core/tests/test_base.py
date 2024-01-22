@@ -8,14 +8,14 @@ def test_dfilter():
 
 
 def test_get_code():
-    assert base.get_code("abc-001") == ('ABC', '001')
-    assert base.get_code("abc-001c") == ('ABC', '001')
-    assert base.get_code("test-abc-001c") == ('ABC', '001')
-    assert base.get_code("example.com@TEST007C.mp4") == ('TEST', '007')
-    assert base.get_code("example.com@TEXT-123-nyap2p.com") == ('TEXT', '123')
-    assert base.get_code("example.com@TEXT-123_2000k.mp4") == ('TEXT', '123')
-    assert base.get_code("test-abc-001ds") == ('ABC', '001')
-    assert base.get_code("test-abc00001ds") == ('ABC', '001')
+    assert base.get_code("abc-001") == 'ABC-001'
+    assert base.get_code("abc-001c") == 'ABC-001'
+    assert base.get_code("test-abc-001c") == 'ABC-001'
+    assert base.get_code("example.com@TEST007C.mp4") == 'TEST-007'
+    assert base.get_code("example.com@TEXT-123-nyap2p.com") == 'TEXT-123'
+    assert base.get_code("example.com@TEXT-123_2000k.mp4") == 'TEXT-123'
+    assert base.get_code("test-abc-001ds") == 'ABC-001'
+    assert base.get_code("test-abc00001ds") == 'ABC-001'
 
 
 def test_code():
@@ -33,9 +33,6 @@ def test_scan_path():
     pass
     # assert len(rs)==2
 
-
 # def test_movie_info():
 #     info = base.movie_info('tests/files/41576.mp4')
 #     assert info['codec_name'] == 'h264'
-
-

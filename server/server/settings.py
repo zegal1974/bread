@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django_rq',
     'api.apps.ApiConfig',
     'cli.apps.CliConfig',
-    'core.apps.CoreConfig'
+    'core.apps.CoreConfig',
+    'dht.apps.DhtConfig'
 ]
 
 MIDDLEWARE = [
@@ -167,5 +168,30 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
+    }
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "rq_console": {
+            "format": "%(asctime)s %(message)s",
+            "datefmt": "%H:%M:%S",
+        },
+    },
+    "handlers": {
+        "rq_console": {
+            "level": "DEBUG",
+            "class": "rq.logutils.ColorizingStreamHandler",
+            "formatter": "rq_console",
+            "exclude": ["%(asctime)s"],
+        },
+    },
+    'loggers': {
+        "rq.worker": {
+            "handlers": ["rq_console", "sentry"],
+            "level": "DEBUG"
+        },
     }
 }

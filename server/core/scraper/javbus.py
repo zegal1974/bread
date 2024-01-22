@@ -11,7 +11,7 @@ from core.scraper.parse import parse_element, parse_tree
 from core.scraper.scraper import Scraper
 from core import config
 from core.utils import db
-from core.utils.magnet import get_magnet_hash
+from core.utils.magnet import get_magnet_hash, get_magnet_size
 
 
 # from api.utils.net import http_get
@@ -146,10 +146,10 @@ class JavbusScraper(Scraper):
     movie_magnets_css = {
         'xpath': '//tr',
         'fields': [
-            {'name': 'link', 'xpath': '/td/a[1]/@href'},
-            {'name': 'name', 'xpath': '/td/a[1]/text()'},
-            {'name': 'size', 'xpath': '/td/a[2]/text()'},
-            {'name': 'shared_on', 'xpath': '/td/a[3]/text()'}
+            {'name': 'link', 'xpath': './td[1]/a/@href'},
+            {'name': 'name', 'xpath': './td[1]/a/text()'},
+            {'name': 'size', 'xpath': './td[2]/a/text()'},
+            {'name': 'shared_on', 'xpath': './td[3]/a/text()'}
         ]
     }
 
@@ -245,20 +245,20 @@ class JavbusScraper(Scraper):
             db.update_actor_movies(actor, movies)
 
     def refresh_movie(self, code: str) -> Movie | None:
-        print(self.url_movie(code))
         content = self.get_html(self.url_movie(code))
-        print(content)
+        # print(content)
         if content is None:
             return None
         doc = etree.HTML(content)
         data = parse_element(doc, JavbusScraper.movie_css)
         movie, created = Movie.objects.update_or_create(code=code, defaults=data)
 
+        self.refresh_movie_actors(movie, doc)
         self.refresh_movie_publisher(movie, doc)
         self.refresh_movie_producer(movie, doc)
         self.refresh_movie_series(movie, doc)
         self.refresh_movie_genres(movie, doc)
-        self.refresh_movie_torrents(movie)
+        self.refresh_movie_magnets(movie)
 
         movie.refreshed_at = django.utils.timezone.now()
         movie.save()
@@ -291,23 +291,24 @@ class JavbusScraper(Scraper):
     def refresh_movie_actors(self, movie: Movie, doc):
         data = parse_tree(doc, JavbusScraper.movie_actors_css)
         for a in data:
-            actor, created = Series.objects.update_or_create(sid=a['sid'], defaults=a)
-            if not movie.actors.exists(actor):
+            actor, created = Actor.objects.update_or_create(sid=a['sid'], defaults=a)
+            if not movie.actors.filter(id=actor.pk).exists():
                 movie.actors.add(actor)
 
-    def refresh_movie_torrents(self, movie: Movie):
+    def refresh_movie_magnets(self, movie: Movie):
         content = self.get_html(self.url_magnets(movie))
-        print(content)
-        magnets = self.parse_movie_torrents(movie, content)
+        magnets = self._parse_movie_magnets(movie, content)
         return magnets
 
-    def parse_movie_torrents(self, movie, content):
+    def _parse_movie_magnets(self, movie: Movie, content: str) -> list:
         doc = etree.HTML(content)
         data = parse_tree(doc, JavbusScraper.movie_magnets_css)
         magnets = []
         for m in data:
-            md = {**m, 'movie': movie, 'hash': get_magnet_hash(m['link'])}
-            magnet, created = Magnet.objects.update_or_create(hash=m['hash'], defaults=m)
+            m['size'] = get_magnet_size(m['size'])
+            m['hash'] = get_magnet_hash(m['link'])
+            m['movie'] = movie
+            magnet, created = Magnet.objects.update_or_create(hash__iexact=m['hash'], defaults=m)
             if created:
                 magnets.append(magnet)
         return magnets
