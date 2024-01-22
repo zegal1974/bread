@@ -126,6 +126,7 @@ class Video(Model):
     codec = CharField(max_length=100, null=True)
     width = IntegerField(default=0)
     height = IntegerField(default=0)
+    definition = CharField(max_length=10, null=True)
     duration = FloatField(default=0)
     size = IntegerField(default=0)
     bit_rate = IntegerField(default=0)

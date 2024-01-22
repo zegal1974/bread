@@ -8,7 +8,8 @@ from django.db.models import Q, Count
 
 from core.scraper.javbus import JavbusScraper
 
-from core.utils import base
+from core.utils import base, checker
+from core.utils.checker import checkers
 
 
 def show_info():
@@ -138,7 +139,7 @@ def list_actor_movies(actor: Actor):
               )
     # print(movies)
 
-    table = Table(title="%s Actresses have rated or refreshed." % count, box=None)
+    table = Table(title="%s Actors have rated or refreshed." % count, box=None)
     table.add_column('code')
     table.add_column('v')
     table.add_column('Published')
@@ -177,22 +178,20 @@ def show_movie(movie: Movie):
     _show_actors(actors)
 
     if movie.length:
-        click.echo("Length    : %i minutes" % movie.length)
+        click.echo(f"Length    : {movie.length} minutes")
     if movie.publisher:
-        click.echo("Publisher : %s" % movie.publisher)
+        click.echo(f"Publisher : {movie.publisher.name}({movie.publisher.sid})")
     if movie.producer:
-        click.echo("Producer  : %s" % movie.producer)
+        click.echo(f"Producer  : {movie.producer.name}({movie.producer.sid})")
     if movie.director:
-        click.echo("Director  : %s" % movie.director)
+        click.echo(f"Director  : {movie.director.name}({movie.director.sid})")
 
     genres = movie.genres.all()
     _show_genres(genres)
 
     click.echo("Has %s of magnets." % movie.magnets.count())
 
-    videos = movie.videos.all()
-    for video in videos:
-        click.echo("%s" % str(os.path.join(video.path, video.name)))
+    _show_movie_videos(movie)
 
 
 def _show_actors(actors):
@@ -208,6 +207,34 @@ def _show_genres(genres):
     if len(genres) > 0:
         click.echo("Genres    : %s" %
                    ', '.join(map(lambda genre: genre.name, genres)))
+
+
+def _show_movie_videos(movie: Movie):
+    count = movie.videos.count()
+    click.echo(f"Has {count} of videos.")
+
+    if count > 0:
+        table = Table(title="Has %s Videos." % count, box=None)
+        table.add_column('codec')
+        table.add_column('definition')
+        table.add_column('path')
+        table.add_column('name')
+
+        for index, video in enumerate(movie.videos.all()):
+            table.add_row(video.codec, video.d, video.path, video.name)
+
+        rich.print(table)
+
+
+def refresh_actors():
+    # count = Actor.objects.filter(Q(rating__gt=0) | Q(refreshed_at__isnull=False)).count()
+
+    actors = Actor.objects.filter(rating__gt=0)
+
+    for actor in actors:
+        click.echo(f"{actor.name}({actor.sid}): ", nl=False)
+        refresh_actor(actor.sid)
+        click.echo('OK')
 
 
 def refresh_actor(sid: str):
@@ -226,3 +253,21 @@ def refresh_movie(code: str):
 def refresh_actor_movies(actor: Actor):
     scraper = JavbusScraper()
     scraper.refresh_actor_movies(actor)
+
+
+def run_all_checkers():
+    """ Run all checkers of registered.
+    """
+    click.echo("Run the actor check-list.")
+    if len(checkers['actor']) > 0:
+        checker.run_actor_checkers()
+    click.echo("Run the movie check-list.")
+    if len(checkers['movie']) > 0:
+        checker.run_movie_checkers()
+    click.echo("Run the video check-list.")
+    if len(checkers['video']) > 0:
+        checker.run_video_checkers()
+    click.echo("Run the other check-list.")
+    if len(checkers['other']) > 0:
+        # run_movie_checkers()
+        pass

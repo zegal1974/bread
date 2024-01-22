@@ -5,6 +5,7 @@ from core.models.models import Actor, Movie
 
 from cli import action
 from core.utils.db import db_restore
+from core.utils.searcher import Searcher, Downloader
 
 from .repl import repl
 from core.utils import local
@@ -45,6 +46,31 @@ def collate_all():
     for actor in actors:
         click.echo(f"collate the actress {actor.name}")
         local.collate_actor(actor)
+
+
+@cli.group()
+def refresh():
+    pass
+
+
+@refresh.command(name="actors")
+def refresh_actors():
+    action.refresh_actors()
+
+
+@refresh.command(name="videos")
+def refresh_videos():
+    local.refresh_videos()
+
+
+# @refresh.command(name="video")
+# def refresh_video():
+#     local.refresh_video()
+
+
+@cli.command()
+def check():
+    action.run_all_checkers()
 
 
 ''' --- DB mode ---- '''
@@ -184,6 +210,18 @@ def movie_refresh(ctx):
 
 
 MOVIE_ATTRS = ['rating', 'description']
+
+
+@movie_mode.command('torrents')
+@click.pass_context
+def movie_download_torrents(ctx):
+    movie = ctx.obj
+
+    searcher = Searcher()
+    downloader = Downloader()
+    results = searcher.search(movie.code)
+    print(results)
+    # downloader.download()
 
 
 @movie_mode.command('set')

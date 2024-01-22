@@ -1,9 +1,9 @@
 import os
 import pathlib
 import shutil
-from core.models.models import Actor, Torrent
-
 import ffmpeg
+
+from core.models import Actor, Torrent, Video, Movie
 
 from core.utils import base
 
@@ -83,11 +83,11 @@ def collate_actor(actor: Actor):
                 print(f"----- {file} is exists.")
                 continue
             try:
-                print(f"====Moving file {file} to {target} ...", nl=False)
+                print(f"====Moving file {file} to {target} ...")
                 shutil.move(file, target)
                 print("  OK.")
-            except Exception:
-                print('  ERR')
+            except Exception as e:
+                print(f'  ERR, {e}')
                 continue
 
 
@@ -106,8 +106,7 @@ def get_video_info(filename: str) -> dict:
     """
     results = {}
     info = ffmpeg.probe(filename)
-    print(info)
-    # logger.debug(info)
+
     if ('streams' not in info) or (len(info['streams']) == 0):
         # TODO: log the error.
         return {}
@@ -117,23 +116,31 @@ def get_video_info(filename: str) -> dict:
     results['width'] = info['streams'][0].get('width', 0)
     results['height'] = info['streams'][0].get('height', 0)
     results['duration'] = info['streams'][0].get('duration', 0)
-
+    # print(results)
     return results
 
 
-def main():
-    pass
+def refresh_videos():
+    results = walk_dir(MOVIE_DIR)
+    for code, files in results.items():
+        for file in files:
+            if base.is_movie(file):
+                path = os.path.dirname(file)
+                basename = os.path.basename(file)
+                video, created = Video.objects.get_or_create(path=path, name=basename)
+                if created:
+                    code = base.get_code(basename)
+                    movie, m_created = Movie.objects.get_or_create(code=code)
+                    if m_created:
+                        # TODO refresh movie.
+                        pass
+                    video.movie = movie
+                print(file)
+                info = get_video_info(file)
+                video.__dict__.update(**info)
+                video.save()
 
-
-if __name__ == "__main__":
-    pass
-    # results = walk_dir('e:\\t')
-    # print(results)
-    # print(len(results))
-    # for code, fts in results.items():
-    #     print(code, fts)
-    #     for ft in results[code]:
-    #         if len(results[code][ft]) > 1:
-    #             print(results[code][ft])
-
-    # collate('qs6')
+# def refresh_video():
+#     file = 'e:\\data\\jp\\楓カレン\\ipx-596ch.mp4'
+#     info = get_video_info(file)
+#     return info
